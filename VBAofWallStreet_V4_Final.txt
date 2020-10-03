@@ -1,0 +1,152 @@
+Sub VBAofWallStreetOne()
+
+ Dim ws As Worksheet
+ 
+ For Each ws In Worksheets
+ 
+ Dim Ticker As String
+ Dim TotalStockVolume As Double
+ Dim Summary As Integer
+ Dim LastRow As Long
+ Dim StartPrice, EndPrice As Double
+ 
+    ws.Range("J1").Value = "Stock Ticker"
+    ws.Range("K1").Value = "Price Change"
+    ws.Range("L1").Value = "% Change"
+    ws.Range("M1").Value = "Total Stock Volume"
+ 
+ 
+ TotalStockVolume = 0
+ Summary = 2
+ LastRow = Cells(Rows.Count, 1).End(xlUp).Row
+ 
+ For i = 2 To LastRow
+     
+    If (ws.Cells(i, 3).Value = 0) Then
+    
+    If (ws.Cells(i + 1).Value <> ws.Cells(i, 1).Value) Then
+    
+    Ticker = ws.Cells(i, 1).Value
+    
+    End If
+    
+    ElseIf (ws.Cells(i + 1, 1).Value = ws.Cells(i, 1).Value) Then
+    
+    TotalStockVolume = TotalStockVolume + ws.Cells(i, 7).Value
+    
+    If (ws.Cells(i - 1, 1).Value <> ws.Cells(i, 1).Value) Then
+    
+    StartPrice = ws.Cells(i, 3).Value
+    
+    End If
+    
+    Else
+    
+    Ticker = ws.Cells(i, 1).Value
+    
+    TotalStockVolume = TotalStockVolume + ws.Cells(i, 7).Value
+ 
+    EndPrice = ws.Cells(i, 6).Value
+    
+    ws.Cells(Summary, 10).Value = Ticker
+    
+    ws.Cells(Summary, 13).Value = TotalStockVolume
+
+    If (TotalStockVolume > 0) Then
+    
+        ws.Cells(Summary, 11).Value = EndPrice - StartPrice
+    
+    If (ws.Cells(Summary, 11).Value > 0) Then
+    
+        ws.Cells(Summary, 11).Interior.ColorIndex = 4
+    
+        Else
+    
+        ws.Cells(Summary, 11).Interior.ColorIndex = 3
+    
+    End If
+
+    ws.Cells(Summary, 12).Value = ws.Cells(Summary, 11).Value / StartPrice
+    
+    Else
+    
+    ws.Cells(Summary, 11).Value = 0
+    
+    ws.Cells(Summary, 12).Value = 0
+     
+    End If
+    
+    ws.Cells(Summary, 12).Style = "Percent"
+    
+    TotalStockVolume = 0
+    
+    Summary = Summary + 1
+    
+    End If
+    
+    Next i
+
+ 'End Sub
+
+'Bonus
+
+    ws.Range("P1").Value = "Ticker"
+    ws.Range("Q1").Value = "Value"
+    ws.Range("O2").Value = "Greatest % Increase"
+    ws.Range("O3").Value = "Greatest % Decrease"
+    ws.Range("O4").Value = "Greatest Total Volume"
+
+Dim GreatestTotalVolume, GreatestIncrease, GreatestDecrease As Double
+
+GreatestTotalVolume = 0
+GreatestIncrease = 0
+GreatestDecrease = 0
+
+Summary = Summary - 2
+
+For i = 2 To Summary
+
+    If (ws.Cells(i, 13).Value > GreatestTotalVolume) Then
+    
+        GreatestTotalVolume = ws.Cells(i, 13).Value
+        
+        ws.Range("P4") = ws.Cells(i, 10).Value
+        
+    End If
+
+Next i
+
+ws.Range("Q4").Value = GreatestTotalVolume
+
+For i = 2 To Summary
+    
+    If (ws.Cells(i, 12).Value > GreatestIncrease) Then
+     
+    GreatestIncrease = ws.Cells(i, 12).Value
+    
+    ws.Range("P2") = ws.Cells(i, 10).Value
+    
+    ElseIf (ws.Cells(i, 12).Value < GreatestDecrease) Then
+    
+    GreatestDecrease = ws.Cells(i, 12).Value
+ 
+    ws.Range("P3").Value = ws.Cells(i, 10).Value
+    
+    End If
+
+Next i
+    
+    ws.Range("Q2").Value = GreatestIncrease
+    ws.Range("Q3").Value = GreatestDecrease
+	
+	ws.Range("Q3").Style = "percent"
+	ws.Range("Q2").Style = "percent"
+  
+Next ws
+    
+End Sub
+
+        
+    
+
+
